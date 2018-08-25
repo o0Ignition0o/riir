@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "lib"
+		},
+		{
+			"path": "bencher"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"cstdint": "cpp",
+			"iosfwd": "cpp",
+			"iostream": "cpp"
+		}
+	}
+}

@@ -1,0 +1,10 @@
+[package]
+name = "riir"
+version = "0.1.0"
+authors = ["Ignition"]
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+bitflags = "1.0"
+libc = "0.2"
