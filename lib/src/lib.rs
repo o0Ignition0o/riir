@@ -68,10 +68,10 @@ fn try_apply_opt_digit(current_octet: Option<u8>, digit_to_apply: u8) -> Option<
 }
 
 #[inline]
-fn try_parse_digit<'a>(digit: &'a str) -> Option<u8> {
+fn try_parse_digit<'a>(digit: &'a [u8]) -> Option<u8> {
     let mut res: Option<u8> = None;
-    for d in digit.chars() {
-        if let Some(applied) = try_apply_opt_digit(res, d as u8) {
+    for d in digit {
+        if let Some(applied) = try_apply_opt_digit(res, *d) {
             res = Some(applied);
         } else {
             return None;
@@ -80,13 +80,10 @@ fn try_parse_digit<'a>(digit: &'a str) -> Option<u8> {
     res
 }
 
-pub fn is_valid_ipv4_addr_readable<'a>(addr: &'a str) -> bool {
+pub fn is_valid_ipv4_addr_readable<'a>(addr: &'a [u8]) -> bool {
     let mut n = 0;
-    for digit in addr.split('.') {
+    for digit in addr.split(|c| *c == b'.') {
         n += 1;
-        if n > 4 {
-            return false;
-        }
 
         // Starting an octet with a . is not allowed.
         if digit.len() == 0 {
@@ -113,11 +110,8 @@ pub extern "C" fn rust_net_is_valid_ipv4_addr<'a>(addr: &'a u8, addrLen: i32) ->
 #[no_mangle]
 #[allow(non_snake_case)]
 pub extern "C" fn rust_net_is_valid_ipv4_addr_readable<'a>(addr: &'a u8, addrLen: i32) -> bool {
-    let address = str::from_utf8(unsafe { slice::from_raw_parts(addr, addrLen as usize) });
-    if address.is_err() {
-        return false;
-    }
-    is_valid_ipv4_addr_readable(address.unwrap())
+    let address = unsafe { slice::from_raw_parts(addr, addrLen as usize) };
+    is_valid_ipv4_addr_readable(address)
 }
 /*
 #[cfg(test)]
