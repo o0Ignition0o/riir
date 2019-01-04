@@ -54,7 +54,7 @@ public:
 	{
 		return mPtr;
 	}
-
+	T* get() const { return mPtr; }
 	template <typename U>
 	bool operator==(const RangedPtr<U>& aOther) const
 	{
@@ -98,6 +98,7 @@ public:
 	{
 		return mPtr >= aOther.mPtr;
 	}
+
 
 private:
 	RangedPtr() = delete;

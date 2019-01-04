@@ -4,7 +4,7 @@
 #include "cpp.h"
 
 using namespace std;
-
+/*
 static void CPPIsValidIPV4LocalHost(benchmark::State& state) {
     const char ip[] = { '1', '2', '7', '.', '0', '.', '0', '.', '1', '\0' };
     while (state.KeepRunning())
@@ -119,8 +119,39 @@ static void RustIsValidIPV4LateFailReadable(benchmark::State& state) {
 	while (state.KeepRunning())
 		benchmark::DoNotOptimize(rust_net_is_valid_ipv4_addr_readable(ip, 16));
 }
+*/
+
+
+
+static void CPPIsValidIPV4FullDigits(benchmark::State& state) {
+	char ip[] = { '1','9','2','.','1','6','8','.','1','2','0','.','1','9','7','\0' };
+	while (state.KeepRunning())
+		benchmark::DoNotOptimize(net_IsValidIPv4Addr(ip, 15));
+}
+
+static void RustIsValidIPV4FullDigits(benchmark::State& state) {
+	char ip[] = { '1','9','2','.','1','6','8','.','1','2','0','.','1','9','7','\0' };
+
+	while (state.KeepRunning())
+		benchmark::DoNotOptimize(rust_net_is_valid_ipv4_addr(ip, 15));
+}
+
+
+static void CPPIsValidIPV6FullDigits(benchmark::State& state) {
+	char ip[] = { '0','1','2','3',':','4','5','6','7',':','8','9','a','b',':','c','d','e','f',':','0','1','2','3',':','4','5','6','7',':','8','9','0','a',':','b','c','d','e', '\0' };
+	while (state.KeepRunning())
+		benchmark::DoNotOptimize(net_IsValidIPv6Addr(ip, 40));
+}
+
+static void RustIsValidIPV6FullDigits(benchmark::State& state) {
+	char ip[] = { '0','1','2','3',':','4','5','6','7',':','8','9','a','b',':','c','d','e','f',':','0','1','2','3',':','4','5','6','7',':','8','9','0','a',':','b','c','d','e', '\0' };
+
+	while (state.KeepRunning())
+		benchmark::DoNotOptimize(rust_net_is_valid_ipv6_addr(ip, 40));
+}
 
 // Register the functions as a benchmark
+/*
 BENCHMARK(CPPIsValidIPV4LocalHost);
 BENCHMARK(CPPIsValidIPV40000);
 BENCHMARK(CPPIsValidIPV48888);
@@ -141,5 +172,20 @@ BENCHMARK(RustIsValidIPV48888Readable);
 BENCHMARK(RustIsValidIPV4FullDigitsReadable);
 BENCHMARK(RustIsValidIPV4EarlyFailReadable);
 BENCHMARK(RustIsValidIPV4LateFailReadable);
+*/
+
+
+BENCHMARK(CPPIsValidIPV6FullDigits);
+BENCHMARK(CPPIsValidIPV6FullDigits);
+BENCHMARK(CPPIsValidIPV6FullDigits);
+BENCHMARK(CPPIsValidIPV6FullDigits);
+BENCHMARK(CPPIsValidIPV6FullDigits);
+
+BENCHMARK(RustIsValidIPV6FullDigits);
+BENCHMARK(RustIsValidIPV6FullDigits);
+BENCHMARK(RustIsValidIPV6FullDigits);
+BENCHMARK(RustIsValidIPV6FullDigits);
+BENCHMARK(RustIsValidIPV6FullDigits);
+
 
 BENCHMARK_MAIN();

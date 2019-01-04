@@ -1,15 +1,18 @@
 #![crate_type = "staticlib"]
-//#![feature(test)]
-//extern crate test;
 
-use std::slice;
-use std::str;
-
-#[inline]
+#[inline(always)]
 fn try_apply_digit(current_octet: u8, digit_to_apply: u8) -> Option<u8> {
     current_octet.checked_mul(10)?.checked_add(digit_to_apply)
 }
 
+#[no_mangle]
+#[allow(non_snake_case)]
+pub extern "C" fn rust_net_is_valid_ipv4_addr<'a>(addr: &'a u8, addrLen: i32) -> bool {
+    let address = unsafe { std::slice::from_raw_parts(addr, addrLen as usize) };
+    is_valid_ipv4_addr(address)
+}
+
+#[inline(always)]
 pub fn is_valid_ipv4_addr<'a>(addr: &'a [u8]) -> bool {
     let mut current_octet: Option<u8> = None;
     let mut dots: u8 = 0;
@@ -17,23 +20,19 @@ pub fn is_valid_ipv4_addr<'a>(addr: &'a [u8]) -> bool {
         let c = *c as char;
         match c {
             '.' => {
-                match current_octet {
-                    None => {
-                        // starting an octet with a . is not allowed
-                        return false;
-                    }
-                    Some(_) => {
-                        dots = dots + 1;
-                        current_octet = None;
-                    }
+                if current_octet.take().is_some() {
+                    dots += 1;
+                } else {
+                    // Starting with a . is not allowed
+                    return false;
                 }
             }
-            // The caracter is not a digit
-            no_digit if no_digit.to_digit(10).is_none() => {
+            // The character is not a digit
+            _ if !c.is_digit(10) => {
                 return false;
             }
             digit => {
-                match current_octet {
+                match current_octet.take() {
                     None => {
                         // Unwrap is sound because it has been checked in the previous arm
                         current_octet = Some(digit.to_digit(10).unwrap() as u8);
@@ -59,81 +58,81 @@ pub fn is_valid_ipv4_addr<'a>(addr: &'a [u8]) -> bool {
     dots == 3 && current_octet.is_some()
 }
 
-#[inline]
-fn try_apply_opt_digit(current_octet: Option<u8>, digit_to_apply: u8) -> Option<u8> {
-    if current_octet.is_none() {
-        return Some(digit_to_apply);
-    }
-    current_octet.unwrap().checked_mul(10)?.checked_add(digit_to_apply)
-}
-
-#[inline]
-fn try_parse_digit<'a>(digit: &'a [u8]) -> Option<u8> {
-    let mut res: Option<u8> = None;
-    for d in digit {
-        if let Some(applied) = try_apply_opt_digit(res, *d) {
-            res = Some(applied);
-        } else {
-            return None;
-        }
-    }
-    res
-}
-
-pub fn is_valid_ipv4_addr_readable<'a>(addr: &'a [u8]) -> bool {
-    let mut n = 0;
-    for digit in addr.split(|c| *c == b'.') {
-        n += 1;
-
-        // Starting an octet with a . is not allowed.
-        if digit.len() == 0 {
-            return false;
-        }
-
-        if let Some(_) = try_parse_digit(digit) {
-            continue;
-        } else {
-            // Parsed garbage, out-of-range, or otherwise invalid number.
-            return false;
-        }
-    }
-    n == 4
-}
-
 #[no_mangle]
 #[allow(non_snake_case)]
-pub extern "C" fn rust_net_is_valid_ipv4_addr<'a>(addr: &'a u8, addrLen: i32) -> bool {
-    let address = unsafe { slice::from_raw_parts(addr, addrLen as usize) };
-    is_valid_ipv4_addr(address)
+pub extern "C" fn rust_net_is_valid_ipv6_addr<'a>(addr: &'a u8, addrLen: i32) -> bool {
+    let address = unsafe { std::slice::from_raw_parts(addr, addrLen as usize) };
+    is_valid_ipv6_addr(address)
 }
 
-#[no_mangle]
-#[allow(non_snake_case)]
-pub extern "C" fn rust_net_is_valid_ipv4_addr_readable<'a>(addr: &'a u8, addrLen: i32) -> bool {
-    let address = unsafe { slice::from_raw_parts(addr, addrLen as usize) };
-    is_valid_ipv4_addr_readable(address)
-}
-/*
-#[cfg(test)]
-mod tests {
-    use is_valid_ipv4_addr;
-    use is_valid_ipv4_addr_readable;
-    use test::{black_box, Bencher};
-
-
-    #[bench]
-    fn bench_is_valid_ipv4_address_full_digits_more_readable(bench: &mut Bencher) {
-        let ip: &str = "192.168.101.117";
-        bench.iter(|| black_box(is_valid_ipv4_addr_readable(ip)));
-    }
-
-    #[bench]
-    fn bench_is_valid_ipv4_address_full_digits(bench: &mut Bencher) {
-        let ip: [u8; 15] = [
-            '1' as u8, '9' as u8, '2' as u8, '.' as u8, '1' as u8, '6' as u8, '8' as u8, '.' as u8,
-            '1' as u8, '0' as u8, '1' as u8, '.' as u8, '1' as u8, '1' as u8, '7' as u8,
-        ];
-        bench.iter(|| black_box(is_valid_ipv4_addr(&ip)));
+#[inline(always)]
+fn is_hex_digit(c: char) -> bool {
+    match c {
+        '0'..='9' => true,
+        'a'..='f' => true,
+        'A'..='F' => true,
+        _ => false,
     }
 }
-*/
+#[inline(always)]
+pub fn is_valid_ipv6_addr<'a>(addr: &'a [u8]) -> bool {
+    let mut double_colon = false;
+    let mut colon_before = false;
+    let mut digits: u8 = 0;
+    let mut blocks: u8 = 0;
+
+    // The smallest ipv6 is unspecified (::)
+    // The IP starts with a single colon
+    if addr.len() < 2 || addr[0] == b':' && addr[1] != b':' {
+        return false;
+    }
+    //Enumerate with an u8 for cache locality
+    for (i, c) in (0u8..).zip(addr) {
+        match c {
+            _ if is_hex_digit(*c as char) => {
+                //(*maybe_digit as char).is_digit(16) => {
+                // Too many digits in the block
+                if digits == 4 {
+                    return false;
+                }
+                colon_before = false;
+                digits += 1;
+            }
+            b':' => {
+                // Too many columns
+                if double_colon && colon_before || blocks == 8 {
+                    return false;
+                }
+                if !colon_before {
+                    if digits != 0 {
+                        blocks += 1;
+                    }
+                    digits = 0;
+                    colon_before = true;
+                } else if !double_colon {
+                    double_colon = true;
+                }
+            }
+            b'.' => {
+                // IPv4 from the last block
+                if is_valid_ipv4_addr(&addr[(i - digits) as usize..]) {
+                    return double_colon && blocks < 6 || !double_colon && blocks == 6;
+                }
+                return false;
+            }
+            _ => {
+                // Invalid character
+                return false;
+            }
+        }
+    }
+    if colon_before && !double_colon {
+        // The IP ends with a single colon
+        return false;
+    }
+    if digits != 0 {
+        blocks += 1;
+    }
+
+    double_colon && blocks < 8 || !double_colon && blocks == 8
+}

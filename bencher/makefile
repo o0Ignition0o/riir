@@ -1,7 +1,7 @@
 OBJECT_FILES = cpp.o bencher.o
 
 CC = g++
-CFLAGS = -Wall -Wextra -Wunreachable-code -g -O2
+CFLAGS = -Wall -Wextra -Wunreachable-code -g -O3
 TARGET = bencher
 
 INC_PATH = -I ../lib/include/
@@ -16,6 +16,7 @@ cpp.o: cpp.cpp
 	$(CC) $(CFLAGS) -c cpp.cpp
 clean:
 	cd ../lib && cargo clean && cd ../bencher && rm -f $(TARGET) $(OBJECT_FILES) *~
-
+build:
+	make
 run:
 	make && ./bencher
