@@ -4,8 +4,8 @@
 
 extern "C"
 {
-    int rust_fibonacci(int32_t n);
-    void external_rust_to_lower(char& c);
+    void to_lower(char& str);
+    void net_to_lower_case(char* str, uint32_t length);
 }
 
 #endif // RIIR

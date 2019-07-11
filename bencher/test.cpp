@@ -5,28 +5,6 @@
 
 using namespace std;
 
-// Tests that two plus two is four.
-TEST(Fibonacci, CPPFib40) {
-	// SETUP PHASE
-	int n = 40;
-	int expected_result = 102334155;
-	// RUN PHASE
-	int actual_result = cpp_fibonacci(n);
-	// ASSERT PHASE
-  	ASSERT_EQ(actual_result, expected_result); // fib(40) is supposed to be 102334155
-}
-
-// Tests that two plus two is four in Rust.
-TEST(Fibonacci, RustFib40) {
-	// SETUP PHASE
-	int n = 40;
-	int expected_result = 102334155;
-	// RUN PHASE
-	int actual_result = rust_fibonacci(n);
-	// ASSERT PHASE
-    ASSERT_EQ(actual_result, expected_result); // fib(40) is supposed to be 102334155
-}
-
 TEST(ToLowerTest, ValidUpperCaseCharacter) {
 	// SETUP PHASE
 	char c = 'C';
@@ -61,6 +39,51 @@ TEST(ToLowerTest, InvalidCharacter) {
 
 	// ASSERT PHASE
     ASSERT_EQ(c, expected_result);
+}
+
+TEST(RustToLowerTest, ValidUpperCaseCharacter) {
+	// SETUP PHASE
+	char c = 'C';
+	char expected_result = 'c';
+
+	// RUN PHASE
+	to_lower(c);
+
+	// ASSERT PHASE
+    ASSERT_EQ(c, expected_result);
+}
+
+TEST(RustToLowerTest, ValidLowerCaseCharacter) {
+	// SETUP PHASE
+	char c = 'e';
+	char expected_result = 'e';
+
+	// RUN PHASE
+	to_lower(c);
+
+	// ASSERT PHASE
+    ASSERT_EQ(c, expected_result);
+}
+
+TEST(RustToLowerTest, InvalidCharacter) {
+	// SETUP PHASE
+	char c = '1';
+	char expected_result = '1';
+
+	// RUN PHASE
+	to_lower(c);
+
+	// ASSERT PHASE
+    ASSERT_EQ(c, expected_result);
+}
+
+TEST(ToLowerCase, HeLlOWoRlD) {
+	char actual_slice[] = { 'H', 'e', 'L', 'l', 'O', ' ', 'W', 'o', 'R', 'l', 'D' , '\0'};
+	char expected_slice[] = { 'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '\0' };
+	int len = strlen(actual_slice);
+
+	net_to_lower_case(actual_slice, len);
+	ASSERT_STREQ(actual_slice, expected_slice);
 }
 
 int main(int argc, char **argv) {
