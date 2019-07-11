@@ -11,7 +11,6 @@ static void CPPFib40(benchmark::State& state) {
 		benchmark::DoNotOptimize(cpp_fibonacci(n));
 }
 
-
 static void RustFib40(benchmark::State& state) {
 	int n = 40;
 	while (state.KeepRunning())

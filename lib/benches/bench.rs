@@ -13,7 +13,7 @@ pub fn slow_fibonacci(n: i32) -> i32 {
 }
 
 fn two_plus_two_benchmark(bench: &mut Bencher) {
-    bench.iter(|| slow_fibonacci(30))
+    bench.iter(|| slow_fibonacci(40))
 }
 
 benchmark_group!(benches, two_plus_two_benchmark);
