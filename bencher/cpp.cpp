@@ -1,5 +1,9 @@
 #include "cpp.h"
 
+void ToLower(char& c) {
+  if ((unsigned)(c - 'A') <= (unsigned)('Z' - 'A')) c += 'a' - 'A';
+}
+
 int cpp_fibonacci(int n)
 {
   if (n < 2) {

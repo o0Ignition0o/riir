@@ -27,6 +27,42 @@ TEST(Fibonacci, RustFib40) {
     ASSERT_EQ(actual_result, expected_result); // fib(40) is supposed to be 102334155
 }
 
+TEST(ToLowerTest, ValidUpperCaseCharacter) {
+	// SETUP PHASE
+	char c = 'C';
+	char expected_result = 'c';
+
+	// RUN PHASE
+	ToLower(c);
+
+	// ASSERT PHASE
+    ASSERT_EQ(c, expected_result);
+}
+
+TEST(ToLowerTest, ValidLowerCaseCharacter) {
+	// SETUP PHASE
+	char c = 'e';
+	char expected_result = 'e';
+
+	// RUN PHASE
+	ToLower(c);
+
+	// ASSERT PHASE
+    ASSERT_EQ(c, expected_result);
+}
+
+TEST(ToLowerTest, InvalidCharacter) {
+	// SETUP PHASE
+	char c = '1';
+	char expected_result = '1';
+
+	// RUN PHASE
+	ToLower(c);
+
+	// ASSERT PHASE
+    ASSERT_EQ(c, expected_result);
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

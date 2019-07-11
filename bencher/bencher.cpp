@@ -18,8 +18,17 @@ static void RustFib40(benchmark::State& state) {
 }
 
 
+static void CPPToLower(benchmark::State& state) {
+	char c = 'C';
+	while (state.KeepRunning())
+		ToLower(c);
+}
+
+
+
 BENCHMARK(CPPFib40);
 BENCHMARK(RustFib40);
+BENCHMARK(CPPToLower);
 
 
 BENCHMARK_MAIN();
