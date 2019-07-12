@@ -27,6 +27,6 @@ clean:
 build:
 	make
 bench:
-	cd ../lib && cargo bench && cd ../bencher && make && $(BENCHER)
+	make clean && cd ../lib && cargo bench && cd ../bencher && make && $(BENCHER)
 test:
-	cd ../lib && cargo test && cd ../bencher && make $(TESTER) && $(TESTER)
+	make clean && cd ../lib && cargo test && cd ../bencher && make $(TESTER) && $(TESTER)

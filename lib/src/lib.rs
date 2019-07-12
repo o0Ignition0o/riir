@@ -4,7 +4,13 @@ use std::os::raw::c_char;
 
 #[no_mangle]
 #[allow(non_snake_case)]
+/// Make sure str_ptr points to an actual string, and len is valid
+/// Before invoking the function
 pub extern "C" fn net_to_lower_case(str_ptr: *mut c_char, len: usize) {
+    // Check for null pointer
+    if str_ptr.is_null() {
+        return;
+    }
     let slice = unsafe { std::slice::from_raw_parts_mut(str_ptr, len) };
     for n in 0..len {
         slice[n] = (slice[n] as u8).to_ascii_lowercase() as c_char;

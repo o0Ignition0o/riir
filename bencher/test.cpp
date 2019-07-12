@@ -86,6 +86,14 @@ TEST(ToLowerCase, HeLlOWoRlD) {
 	ASSERT_STREQ(actual_slice, expected_slice);
 }
 
+TEST(ToLowerCase, NullPtr) {
+	char* actual_slice = nullptr;
+	int len = 20;
+
+	net_to_lower_case(actual_slice, len);
+	// ASSERT_STREQ(actual_slice, actual_slice);
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
