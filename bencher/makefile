@@ -1,7 +1,7 @@
 OBJECT_FILES = cpp.o bencher.o
 TESTER_FILES = cpp.o test.o
 
-CC = g++
+CC = g++ -std=c++14 -v
 CFLAGS = -Wall -Wextra -Wunreachable-code -g
 BENCHER = build/bencher
 TESTER = build/tester
