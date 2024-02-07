@@ -10,10 +10,17 @@ name = "bench"
 [dependencies]
 bencher = "*"
 bitflags = "1.0"
+const-cstr = "0.3.0"
+dlopen = "0.1.8"
 libc = "0.2"
+regex = "1.8.4"
+
+[examples]
+
 
 [lib]
-crate-type = ["staticlib"]
+# crate-type = ["staticlib"]
+crate-type = ["cdylib"]
 
 [profile]
 [profile.release]

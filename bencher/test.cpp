@@ -86,6 +86,16 @@ TEST(ToLowerCase, HeLlOWoRlD) {
 	ASSERT_STREQ(actual_slice, expected_slice);
 }
 
+
+TEST(ToLowerCase, HeLlOWoRlDCPP) {
+	char actual_slice[] = { 'H', 'e', 'L', 'l', 'O', ' ', 'W', 'o', 'R', 'l', 'D' , '\0'};
+	char expected_slice[] = { 'h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '\0' };
+	int len = strlen(actual_slice);
+
+	net_ToLowerCase(actual_slice, len);
+	ASSERT_STREQ(actual_slice, expected_slice);
+}
+
 TEST(ToLowerCase, NullPtr) {
 	char* actual_slice = nullptr;
 	int len = 20;

@@ -1,14 +1,14 @@
 OBJECT_FILES = cpp.o bencher.o
 TESTER_FILES = cpp.o test.o
 
-CC = g++ -std=c++14 -v
+CC = g++ -std=c++17 -v
 CFLAGS = -Wall -Wextra -Wunreachable-code -g
 BENCHER = build/bencher
 TESTER = build/tester
 
 INC_PATH = -I ../lib/include/ -I /usr/local/include
 LIB_PATH = -L ../lib/target/release/ -L /usr/local/lib
-LIB_NAME = -lriir -lbenchmark -lpthread -ldl -lgtest
+LIB_NAME = -lriir -lbenchmark -ldl -lgtest -lpthread
 
 $(BENCHER): $(OBJECT_FILES)
 	$(CC) $(CFLAGS) $(INC_PATH) $(OBJECT_FILES) $(LIB_PATH) $(LIB_NAME) -o $(BENCHER)

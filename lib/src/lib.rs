@@ -25,6 +25,12 @@ pub extern "C" fn external_rust_to_lower(c: &mut u8) {
 
 #[no_mangle]
 #[allow(non_snake_case)]
+pub extern "C" fn print_something() {
+    println!("hello world!");
+}
+
+#[no_mangle]
+#[allow(non_snake_case)]
 pub extern "C" fn to_lower(c: *mut c_char) {
     rust_to_lower(unsafe { &mut *(c as *mut i8 as *mut u8) });
 }
